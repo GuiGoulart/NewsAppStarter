@@ -2,13 +2,16 @@ package severo.io.newsappstarter.ui.activity
 
 import android.app.Dialog
 import android.content.Intent
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_home.*
 import severo.io.newsappstarter.R
+import severo.io.newsappstarter.databinding.ActivityHomeBinding
 import severo.io.newsappstarter.model.Article
 import severo.io.newsappstarter.model.data.NewsDataSource
 import severo.io.newsappstarter.presenter.ViewHome
@@ -16,15 +19,21 @@ import severo.io.newsappstarter.presenter.news.NewsPresenter
 import severo.io.newsappstarter.ui.adapter.HomeAdapter
 import severo.io.newsappstarter.util.Util
 
-class HomeActivity : AbstractActivity(), ViewHome.View {
+class HomeActivity : AppCompatActivity(), ViewHome.View {
 
-    private val homeAdapter by lazy { HomeAdapter() }
+    private val homeAdapter by lazy {
+        HomeAdapter()
+    }
+
+    private lateinit var binding: ActivityHomeBinding
     private lateinit var presenter: NewsPresenter
     private var dialog: Dialog? = null
 
-    override fun getLayout(): Int = R.layout.activity_home
-
-    override fun onInject() {
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val dataSource = NewsDataSource(this)
         presenter = NewsPresenter(this, dataSource)
@@ -35,7 +44,7 @@ class HomeActivity : AbstractActivity(), ViewHome.View {
     }
 
     private fun configRecycler(){
-        with(rvNews) {
+        with(binding.rvNews) {
             adapter = homeAdapter
             layoutManager = LinearLayoutManager(this@HomeActivity)
             addItemDecoration(

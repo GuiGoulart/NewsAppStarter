@@ -2,11 +2,13 @@ package severo.io.newsappstarter.ui.activity
 
 import android.app.Dialog
 import android.content.Intent
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_search.*
-import severo.io.newsappstarter.R
+import severo.io.newsappstarter.databinding.ActivitySearchBinding
 import severo.io.newsappstarter.model.Article
 import severo.io.newsappstarter.model.data.NewsDataSource
 import severo.io.newsappstarter.presenter.ViewHome
@@ -15,18 +17,22 @@ import severo.io.newsappstarter.ui.adapter.HomeAdapter
 import severo.io.newsappstarter.util.Util
 import severo.io.newsappstarter.util.UtilQueryTextListener
 
-class SearchActivity : AbstractActivity(), ViewHome.View {
+class SearchActivity : AppCompatActivity(), ViewHome.View {
 
     private val searchAdapter by lazy {
         HomeAdapter()
     }
 
+    private lateinit var binding: ActivitySearchBinding
+
     private lateinit var presenter: SearchPresenter
     private var dialog: Dialog? = null
 
-    override fun getLayout(): Int = R.layout.activity_search
-
-    override fun onInject() {
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val dataSource = NewsDataSource(this)
         presenter = SearchPresenter(this, dataSource)
@@ -37,7 +43,7 @@ class SearchActivity : AbstractActivity(), ViewHome.View {
     }
 
     private fun search() {
-        searchView.setOnQueryTextListener(
+        binding.searchView.setOnQueryTextListener(
             UtilQueryTextListener(
                 this.lifecycle
             ){
@@ -53,7 +59,7 @@ class SearchActivity : AbstractActivity(), ViewHome.View {
     }
 
     private fun configRecycler(){
-        with(rvSearch) {
+        with(binding.rvSearch) {
             adapter = searchAdapter
             layoutManager = LinearLayoutManager(this@SearchActivity)
             addItemDecoration(

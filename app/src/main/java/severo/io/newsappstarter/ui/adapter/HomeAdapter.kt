@@ -6,18 +6,21 @@ import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.adapter_news.view.*
 import severo.io.newsappstarter.R
+import severo.io.newsappstarter.databinding.AdapterNewsBinding
 import severo.io.newsappstarter.model.Article
 import severo.io.newsappstarter.util.Util
+import kotlin.coroutines.coroutineContext
 
 class HomeAdapter : RecyclerView.Adapter<HomeAdapter.ArticleViewHolder>() {
 
-    inner class ArticleViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
+    inner class ArticleViewHolder(val binging: AdapterNewsBinding) : RecyclerView.ViewHolder(binging.root)
 
     private val differCallback = object : DiffUtil.ItemCallback<Article>(){
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
@@ -34,30 +37,29 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.ArticleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder =
         ArticleViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.adapter_news, parent, false)
+            AdapterNewsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
 
     override fun getItemCount(): Int = differ.currentList.size
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
-        val article = differ.currentList[position]
 
-        holder.itemView.apply {
-            Glide.with(this).load(article.urlToImage).into(imageViewArticle)
-            textViewTitle.text = article.title
-            textViewDescription.text = Html.fromHtml(article.description, Html.FROM_HTML_MODE_COMPACT)
-            textViewSource.text = Html.fromHtml("<b>${resources.getString(R.string.source)}</b> ${article.source?.name}", Html.FROM_HTML_MODE_COMPACT)
-            textViewPublichedAt.text = Html.fromHtml("<b>${resources.getString(R.string.published_at)}</b> ${
-                Util.convertDateFormat(article.publishedAt, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd/MM/yyy - HH:mm"
-                ) }", Html.FROM_HTML_MODE_COMPACT)
+        with(holder){
+            with(differ.currentList[position]){
+                Glide.with(holder.itemView.context).load(urlToImage).into(binging.imageViewArticle)
+                binging.textViewTitle.text = title
+                binging.textViewDescription.text = Html.fromHtml(description, Html.FROM_HTML_MODE_COMPACT)
+                binging.textViewSource.text = Html.fromHtml("Fonte:</b> ${source?.name}", Html.FROM_HTML_MODE_COMPACT)
+                binging.textViewPublichedAt.text = Html.fromHtml("<b>Publicado em:</b> ${
+                    Util.convertDateFormat(publishedAt, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd/MM/yyy - HH:mm"
+                    ) }", Html.FROM_HTML_MODE_COMPACT)
 
-            setOnClickListener {
                 onItemClickListener?.let { click ->
-                    click(article)
+                    click(this)
                 }
-            }
 
+            }
         }
     }
 
