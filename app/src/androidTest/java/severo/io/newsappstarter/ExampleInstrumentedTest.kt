@@ -1,4 +1,4 @@
-package daniellopes.io.newsappstarter
+package severo.io.newsappstarter
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package daniellopes.io.newsappstarter
+package severo.io.newsappstarter
 
 import org.junit.Test
 
