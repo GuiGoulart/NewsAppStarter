@@ -46,7 +46,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.ArticleViewHolder>() {
         holder.itemView.apply {
             Glide.with(this).load(article.urlToImage).into(imageViewArticle)
             textViewTitle.text = article.title
-            textViewDescription.text = article.description
+            textViewDescription.text = Html.fromHtml(article.description, Html.FROM_HTML_MODE_COMPACT)
             textViewSource.text = Html.fromHtml("<b>${resources.getString(R.string.source)}</b> ${article.source?.name}", Html.FROM_HTML_MODE_COMPACT)
             textViewPublichedAt.text = Html.fromHtml("<b>${resources.getString(R.string.published_at)}</b> ${
                 Util.convertDateFormat(article.publishedAt, "yyyy-MM-dd'T'HH:mm:ss'Z'", "dd/MM/yyy - HH:mm"
